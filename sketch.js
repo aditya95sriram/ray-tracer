@@ -1,5 +1,5 @@
 let source_height;
-let source_pos;
+let source_pos, source_top, source_bot;
 let screen_x = 900;
 let screen_height = 700;
 let obstacles, trash;
@@ -9,6 +9,7 @@ let source_color = 'yellow',
     obstacle_color = 'lightblue',
     screen_color = 'pink';
 let resolution = 0.2;  // percentage of pixels rendered (max 1)
+let show_guidelines = true;
 
 
 function Obstacle(start, end) {
@@ -29,7 +30,10 @@ function init() {
   obstacles = [];
   trash = [];
   source_pos = createVector(0, 0);
-  source_height = 100;
+  source_height = 50;
+  source_top = createVector(source_pos.x, source_pos.y-source_height/2);
+  source_bot = createVector(source_pos.x, source_pos.y+source_height/2);
+  show_guidelines = true;
 }
 
 function setup() {
@@ -96,6 +100,14 @@ function get_intensities() {
   pop();
 }
 
+function draw_guidelines() {
+  let p = getMouse();
+  let n = p5.Vector.sub(p, source_top).setMag(1200).add(source_top);
+  line(source_top.x, source_top.y, n.x, n.y);
+  n = p5.Vector.sub(p, source_bot).setMag(1200).add(source_bot);
+  line(source_bot.x, source_bot.y, n.x, n.y);
+}
+
 function draw() {
   background(0);
   translate(offset_x, height / 2);
@@ -103,6 +115,7 @@ function draw() {
   draw_screen();
   draw_obstacles();
   get_intensities();
+  if (show_guidelines) draw_guidelines();
   noStroke();
   fill(obstacle_color);
   ellipse(mouseX-offset_x, mouseY-height/2, 5);
@@ -123,6 +136,7 @@ function mouseReleased() {
 function keyPressed() {
   if (key == 'z' && obstacles.length) trash.push(obstacles.pop());
   if ((key == 'Z' || key == 'x') && trash.length) obstacles.push(trash.pop());
+  if (key == 'g') show_guidelines = !show_guidelines;
 }
 
 
