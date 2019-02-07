@@ -8,9 +8,10 @@ let mouse_start;
 let source_color = 'yellow',
     obstacle_color = 'lightblue',
     screen_color = 'pink';
-let resolution = 0.2;  // percentage of pixels rendered (max 1)
+let resolution = 0.5;  // percentage of pixels rendered (max 1)
 let show_guidelines = true;
-
+let fps_prev = new Date(), fps_cur, fps;
+let frame_ctr = 0;
 
 function Obstacle(start, end) {
   this.x1 = this.x2 = start.x;  // same x coord
@@ -39,6 +40,7 @@ function init() {
 function setup() {
   createCanvas(1080, 720);
   init();
+  textAlign(LEFT, TOP);
 }
 
 function getMouse() {
@@ -110,6 +112,17 @@ function draw_guidelines() {
 
 function draw() {
   background(0);
+  /* display fps */
+  if (frame_ctr%100 == 0) {
+    fps_cur = new Date();
+    fps = 100000 / (fps_cur - fps_prev);
+    fps_prev = fps_cur;
+  }
+  frame_ctr++;
+  fill('white');
+  textSize(25);
+  text(parseInt(fps), 0, 0);
+
   translate(offset_x, height / 2);
   draw_source();
   draw_screen();
