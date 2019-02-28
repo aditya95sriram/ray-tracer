@@ -43,6 +43,22 @@ function Obstacle(start, end) {
 
 function init() {
   obstacles = [];
+  if (window.location.search.indexOf("pos") >= 0) {
+    query = window.location.search.substr(1).split("&");
+    console.log("loading from query");
+    for (let param of query) {
+      let kv = param.split("=");
+      if (kv[0] == "pos") {
+        let obs = kv[1].split(";");
+        for (let ob of obs) {
+          let xy = ob.split(",");
+          console.log(createVector(parseInt(xy[0]), parseInt(xy[1])), createVector(parseInt(xy[2]), parseInt(xy[3])));
+          obstacles.push(new Obstacle(createVector(parseInt(xy[0]), parseInt(xy[1])),
+                                      createVector(parseInt(xy[2]), parseInt(xy[3]))));
+        }
+      }
+    }
+  }
   trash = [];
   source_pos = createVector(0, 0);
   source_height = 50;
@@ -206,6 +222,13 @@ function keyPressed() {
   if (key == 's') shadow_mode = 1-shadow_mode;
   if (key == 'h') alert(" z - undo \n shift+z|x - redo \n g - guidelines \n \
 s - shadow mode \n h - help screen");
+  if (key == 'c') share();
+}
+
+function share() {
+  if (obstacles.length == 0) return;
+  let pos = obstacles.map(x => x.x1 + "," + x.y1 + "," + x.x2 + "," + x.y2).join(";");
+  window.history.pushState({}, "Ray-tracer", "?pos="+pos);
 }
 
 
